@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Smart Interview Analyzer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <div class="logo-icon"></div>
+            <span>SmartInterview</span>
+        </div>
+        <nav id="main-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="register.html" class="btn-nav">Register</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="auth-wrapper">
+            <div class="glass-container auth-card">
+                <div class="auth-header">
+                    <h2>Create Account</h2>
+                    <p>Start checking your interview readiness</p>
+                </div>
+                
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" class="form-input" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="john@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password" class="form-label">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">Create Account</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Log in here</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AI Smart Interview Analyzer. All rights reserved.</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

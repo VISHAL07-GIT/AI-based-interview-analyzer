@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Interview Session - Smart Interview Analyzer</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- MediaPipe CDN scripts for client-side face-mesh tracker -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>SmartInterview</span>
+        </div>
+        <div id="session-timer" style="font-weight: 600; color: var(--text-secondary); font-size: 0.95rem;">Session: --:--</div>
+    </header>
+
+    <main>
+        <!-- Modal backdrop for loading screen between questions -->
+        <div id="loading-overlay" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.9); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+            <div class="spinner" style="width: 60px; height: 60px; border-width: 6px;"></div>
+            <h3 id="loading-message">AI is transcribing and evaluating your answer...</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Please keep your browser tab active</p>
+        </div>
+
+        <div class="interview-layout">
+            
+            <!-- Left Side: Question Display, Recorder, Progress controls -->
+            <div class="glass-container stage-card">
+                <div class="question-indicator" id="question-index-label">Question 1 of 3</div>
+                
+                <div class="question-box">
+                    <h2 id="question-text-display">Loading question...</h2>
+                </div>
+                
+                <div class="recording-controls-wrapper">
+                    <!-- Mic recording button -->
+                    <button id="btn-mic" class="mic-btn">🎙️</button>
+                    
+                    <div class="timer-display" id="record-timer">00:00</div>
+                    <p id="record-status-msg" style="color: var(--text-secondary); font-size: 0.9rem;">Click the microphone to start recording your response</p>
+                </div>
+                
+                <div class="stage-footer">
+                    <button id="btn-cancel" class="btn-secondary">Quit Session</button>
+                    <button id="btn-next" class="btn-primary" disabled>Next Question ➔</button>
+                </div>
+            </div>
+
+            <!-- Right Side: Webcam Camera and MediaPipe Analytics -->
+            <div class="glass-container webcam-panel">
+                <div class="panel-header" style="margin-bottom: 15px;">
+                    <h3>Behavioral Camera Analysis</h3>
+                </div>
+                
+                <div class="webcam-viewport-wrapper">
+                    <!-- Active Video Stream -->
+                    <video id="webcam-video" class="webcam-video" autoplay playsinline muted></video>
+                    
+                    <!-- Fallback placeholder graphic if camera is not enabled -->
+                    <div id="camera-placeholder" class="webcam-placeholder-graphic">
+                        <span>📹</span>
+                        <p id="camera-placeholder-msg">Requesting camera access...</p>
+                    </div>
+                    
+                    <!-- MediaPipe real-time indicators -->
+                    <div class="webcam-metrics-overlay">
+                        <div class="metric-chip" id="chip-eye-contact">
+                            👁️ Eye Contact: <span id="val-eye-contact">--</span>
+                        </div>
+                        <div class="metric-chip" id="chip-smile">
+                            😊 Smile: <span id="val-smile">--</span>
+                        </div>
+                        <div class="metric-chip" id="chip-position">
+                            👤 Position: <span id="val-position">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">
+                    <p>💡 **Instructions**: Position yourself in the center of the camera. Maintain focus on the screen to score highly in eye contact. Speak naturally and try to avoid looking away.</p>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AI Smart Interview Analyzer. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/interview.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Interview Analyzer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <div class="logo-icon"></div>
+            <span>SmartInterview</span>
+        </div>
+        <nav id="main-nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="login.html" class="nav-link active">Login</a>
+            <a href="register.html" class="btn-nav">Register</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="auth-wrapper">
+            <div class="glass-container auth-card">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Log in to access your interview dashboard</p>
+                </div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">Sign In</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="register.html">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AI Smart Interview Analyzer. All rights reserved.</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

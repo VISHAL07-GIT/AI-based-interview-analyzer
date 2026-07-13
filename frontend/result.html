@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Report - Smart Interview Analyzer</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Chart.js CDN for animated statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            <div class="logo-icon"></div>
+            <span>SmartInterview</span>
+        </div>
+        <nav id="main-nav">
+            <!-- Populated by auth.js -->
+        </nav>
+    </header>
+
+    <main>
+        
+        <!-- Results Summary Header -->
+        <div class="glass-container results-header-card">
+            <div class="results-summary">
+                <h1 id="report-title">Interview Evaluation Report</h1>
+                <p id="report-date">Date: --, --</p>
+                <div style="margin-top: 15px;">
+                    <a href="dashboard.html" class="btn-secondary" style="padding: 10px 20px; font-size: 0.9rem;">➔ Return to Dashboard</a>
+                </div>
+            </div>
+            
+            <!-- Overall score radial wheel -->
+            <div class="overall-score-wheel" id="overall-score-wheel">
+                <div class="overall-score-wheel-text">
+                    <h2 id="overall-score-val">0</h2>
+                    <span>Overall / 100</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scores Breakdown & AI Recommendations -->
+        <div class="results-grid">
+            
+            <!-- Left: Dynamic Chart.js Graph -->
+            <div class="glass-container chart-panel">
+                <div class="panel-header">
+                    <h3>Performance Dimensions</h3>
+                </div>
+                <div style="position: relative; width: 100%; height: 280px; display: flex; justify-content: center;">
+                    <canvas id="scores-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right: High-level Strengths and Improvements -->
+            <div class="glass-container feedback-panel">
+                <div class="panel-header">
+                    <h3>AI Feedback Summary</h3>
+                </div>
+                
+                <div class="feedback-section">
+                    <h4>✨ Identified Key Strengths</h4>
+                    <ul class="feedback-list strengths" id="strengths-list">
+                        <li>Evaluating your speaking metrics...</li>
+                    </ul>
+                </div>
+
+                <div class="feedback-section">
+                    <h4>⚠️ Recommended Focus Areas</h4>
+                    <ul class="feedback-list improvements" id="improvements-list">
+                        <li>Evaluating performance checks...</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Question-by-Question Detailed Analysis -->
+        <section class="qa-breakdown-section">
+            <h3>Question Breakdown</h3>
+            
+            <div id="qa-cards-container">
+                <!-- Dynamically populated by result.js -->
+                <div class="glass-container qa-card text-center">
+                    <p style="color: var(--text-secondary);">Loading evaluation cards...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AI Smart Interview Analyzer. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/result.js"></script>
+</body>
+</html>
