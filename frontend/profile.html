@@ -3,85 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile - Smart Interview Analyzer</title>
+    <title>Candidate Public Profile - Smart Interview Analyzer</title>
+    <meta name="description" content="View candidate AI mock interview achievements, performance scores, and key strengths.">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 40px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .public-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        .share-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+        .share-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(15, 19, 34, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .profile-stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .profile-stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        .profile-stat-lbl {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .strengths-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .strength-tag {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
 
+    <!-- Transparent Glass Header -->
     <header>
         <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
             <div class="logo-icon"></div>
             <span>SmartInterview</span>
         </div>
         <nav id="main-nav">
-            <!-- Populated by auth.js -->
+            <!-- Populated dynamically by auth.js -->
         </nav>
     </header>
 
+    <!-- Main Container -->
     <main>
-        <div class="glass-container profile-card">
-            <div class="profile-avatar-row">
-                <div class="profile-avatar" id="profile-initials">C</div>
-                <div class="profile-meta">
-                    <h3 id="profile-name">Candidate Name</h3>
-                    <p id="profile-email">candidate@example.com</p>
-                </div>
-            </div>
+        <div class="profile-container">
             
-            <div class="panel-header">
-                <h3>Account Summary</h3>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
-                <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
-                    <span style="color: var(--text-secondary); font-weight: 500;">Average Evaluation Score</span>
-                    <span style="font-weight: 700; color: var(--primary-color);" id="profile-avg-score">--</span>
+            <!-- Candidate Header Card -->
+            <div class="glass-container" style="padding: 30px;">
+                <div class="profile-avatar-row" style="align-items: center;">
+                    <div class="profile-avatar" id="profile-initials" style="width: 70px; height: 70px; font-size: 1.8rem;">C</div>
+                    <div class="profile-meta">
+                        <h2 id="profile-name" style="font-size: 1.6rem; font-weight: 700;">Candidate Profile</h2>
+                        <p id="profile-email" style="color: var(--text-secondary); font-size: 0.9rem;">candidate@example.com</p>
+                        <div class="public-badge">
+                            <span>✨</span> Verified Candidate Portfolio
+                        </div>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
-                    <span style="color: var(--text-secondary); font-weight: 500;">Practice Sessions Finished</span>
-                    <span style="font-weight: 700;" id="profile-sessions-count">--</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
-                    <span style="color: var(--text-secondary); font-weight: 500;">Primary Target Role</span>
-                    <span style="font-weight: 700; color: var(--success-color);">Software Engineer</span>
+
+                <!-- Permanent Public Sharing Box -->
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <label class="form-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">
+                        🔗 Permanent Shareable Public Profile URL
+                    </label>
+                    <div class="share-box">
+                        <input type="text" id="share-url-input" class="share-input" readonly value="Loading link...">
+                        <button id="btn-copy-share" class="btn-primary" style="padding: 10px 18px; font-size: 0.85rem; white-space: nowrap;">
+                            📋 Copy Public Link
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <button onclick="logout()" class="btn-secondary" style="width: 100%; justify-content: center;">Sign Out of Account</button>
+            <!-- Stats Overview Card -->
+            <div class="glass-container" style="padding: 30px;">
+                <div class="panel-header">
+                    <h3>Performance Overview</h3>
+                </div>
+
+                <div class="profile-stats-grid">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-val" id="stat-overall-score">--</div>
+                        <div class="profile-stat-lbl">Average AI Score</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-val" id="stat-total-interviews" style="color: var(--secondary-color);">--</div>
+                        <div class="profile-stat-lbl">Practice Sessions Completed</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-val" id="stat-tech-score" style="color: var(--success-color);">--</div>
+                        <div class="profile-stat-lbl">Technical Knowledge</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-val" id="stat-confidence-score" style="color: var(--warning-color);">--</div>
+                        <div class="profile-stat-lbl">Confidence Delivery</div>
+                    </div>
+                </div>
+
+                <!-- Key Strengths -->
+                <div style="margin-top: 30px;">
+                    <h4 style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 8px;">Demonstrated Key Strengths</h4>
+                    <div class="strengths-grid" id="strengths-tags-container">
+                        <span class="strength-tag">Solid communication skills</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons for Account Owner -->
+            <div id="owner-actions-box" class="glass-container hidden" style="padding: 20px; text-align: center;">
+                <button onclick="logout()" class="btn-secondary" style="margin: 0 auto;">Sign Out of Account</button>
+            </div>
+
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 AI Smart Interview Analyzer. All rights reserved.</p>
+        <p>&copy; 2026 AI Smart Interview Analyzer. Permanent Candidate Portfolio.</p>
     </footer>
 
     <!-- Scripts -->
     <script src="js/auth.js"></script>
     <script>
-        // Check authentication
-        checkAuth();
-        
         document.addEventListener("DOMContentLoaded", () => {
-            const user = getCurrentUser();
-            if (user) {
-                document.getElementById("profile-name").innerText = user.name;
-                document.getElementById("profile-email").innerText = user.email;
-                document.getElementById("profile-initials").innerText = user.name.charAt(0).toUpperCase();
-                
-                // Fetch stats from backend
-                fetch(`${API_BASE_URL}/dashboard/stats/${user.id}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.total_interviews !== undefined) {
-                            document.getElementById("profile-avg-score").innerText = `${data.average_score}%`;
-                            document.getElementById("profile-sessions-count").innerText = data.total_interviews;
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Profile Stats fetch error:", err);
-                    });
+            const urlParams = new URLSearchParams(window.location.search);
+            let targetUserId = urlParams.get("user_id");
+            
+            const currentUser = getCurrentUser();
+            
+            // If user_id is not specified in URL, check if logged in
+            if (!targetUserId && currentUser) {
+                targetUserId = currentUser.id;
             }
+            
+            if (!targetUserId) {
+                // Not logged in and no user_id query parameter
+                showToast("Please log in or specify a valid user_id profile parameter.", "info");
+                setTimeout(() => window.location.href = "login.html", 1500);
+                return;
+            }
+            
+            // Show logout action if viewing own profile
+            if (currentUser && String(currentUser.id) === String(targetUserId)) {
+                document.getElementById("owner-actions-box").classList.remove("hidden");
+            }
+            
+            // Build permanent shareable public URL
+            const publicUrl = `${window.location.origin}${window.location.pathname}?user_id=${targetUserId}`;
+            const shareInput = document.getElementById("share-url-input");
+            shareInput.value = publicUrl;
+            
+            // Copy button logic
+            document.getElementById("btn-copy-share").addEventListener("click", () => {
+                shareInput.select();
+                navigator.clipboard.writeText(publicUrl);
+                showToast("Permanent profile URL copied to clipboard! ✨", "success");
+            });
+
+            // Fetch public profile data
+            fetch(`${API_BASE_URL}/profile/public/${targetUserId}`)
+                .then(res => {
+                    if (!res.ok) throw new Error("Profile not found");
+                    return res.json();
+                })
+                .then(data => {
+                    renderPublicProfile(data);
+                })
+                .catch(err => {
+                    console.error("Fetch profile error:", err);
+                    showToast("Could not load public profile data.", "error");
+                });
         });
+
+        function renderPublicProfile(data) {
+            document.getElementById("profile-name").innerText = data.name;
+            document.getElementById("profile-email").innerText = `Candidate ID #${data.user_id} • Member since ${data.member_since}`;
+            document.getElementById("profile-initials").innerText = data.name ? data.name.charAt(0).toUpperCase() : "C";
+            
+            document.getElementById("stat-overall-score").innerText = `${data.average_score}%`;
+            document.getElementById("stat-total-interviews").innerText = data.total_interviews;
+            
+            if (data.averages) {
+                document.getElementById("stat-tech-score").innerText = `${data.averages.technical}/25`;
+                document.getElementById("stat-confidence-score").innerText = `${data.averages.confidence}/20`;
+            }
+            
+            const strengthsContainer = document.getElementById("strengths-tags-container");
+            strengthsContainer.innerHTML = "";
+            if (data.key_strengths && data.key_strengths.length > 0) {
+                data.key_strengths.forEach(str => {
+                    const span = document.createElement("span");
+                    span.className = "strength-tag";
+                    span.innerText = `✨ ${str}`;
+                    strengthsContainer.appendChild(span);
+                });
+            } else {
+                strengthsContainer.innerHTML = "<span style='color:var(--text-secondary); font-size:0.85rem;'>No specific strengths recorded yet.</span>";
+            }
+        }
     </script>
 </body>
 </html>

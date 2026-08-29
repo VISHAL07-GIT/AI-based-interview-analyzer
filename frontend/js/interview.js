@@ -58,7 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch questions from API
     async function initSession() {
         try {
-            const res = await fetch(`${API_BASE_URL}/questions?category=${category}&limit=${limit}`);
+            const userIdParam = user ? `&user_id=${user.id}` : '';
+            const res = await fetch(`${API_BASE_URL}/questions?category=${category}&limit=${limit}${userIdParam}`);
             if (!res.ok) throw new Error("Questions loading failed.");
             questions = await res.json();
             

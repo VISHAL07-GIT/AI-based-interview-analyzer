@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+backend/__pycache__/
+backend/uploads/audio/*
+!backend/uploads/audio/.gitkeep
+backend/uploads/resumes/*
+!backend/uploads/resumes/.gitkeep
+.DS_Store

@@ -24,7 +24,7 @@ FILLER_WORDS = ["um", "uh", "actually", "basically", "like", "you know", "sort o
 
 # Grammatical issues list & corrections
 GRAMMAR_RULES = [
-    (r"\b(i|he|she|it|they|we|you)\s+goes\b", "go"),
+    (r"\b(i|they|we|you)\s+goes\b", "go"),
     (r"\b(he|she|it)\s+don't\b", "doesn't"),
     (r"\b(i|they|we|you)\s+doesn't\b", "don't"),
     (r"\b(i)\s+is\b", "am"),
@@ -147,12 +147,12 @@ def check_grammar_and_vocab(text):
         for match in matches:
             corrections.append({
                 "mistake": match.group(0),
-                "suggestion": replacement,
+                "suggestion": match.expand(replacement),
                 "context": text[max(0, match.start()-15):min(len(text), match.end()+15)]
             })
             
     # Sentence ending punctuation check (heuristics)
-    if len(text) > 5 and not text.strip()[-1] in ['.', '!', '?']:
+    if len(text.strip()) > 5 and not text.strip()[-1] in ['.', '!', '?']:
         corrections.append({
             "mistake": "No ending punctuation",
             "suggestion": "End your sentences with a period.",
@@ -309,20 +309,25 @@ def parse_resume(file_path):
     Returns: match_score, matched_skills, missing_skills, experience_mentions.
     """
     text = ""
-    try:
-        reader = pypdf.PdfReader(file_path)
-        for page in reader.pages:
-            t = page.extract_text()
-            if t:
-                text += t + "\n"
-    except Exception as e:
-        print(f"Error reading PDF: {e}")
-        # Try raw text reading in case it is a simple text file
+    if file_path.lower().endswith('.pdf'):
+        try:
+            reader = pypdf.PdfReader(file_path)
+            for page in reader.pages:
+                t = page.extract_text()
+                if t:
+                    text += t + "\n"
+        except Exception as e:
+            print(f"Error reading PDF: {e}")
+            return {"error": "Could not parse PDF file. The file may be corrupt or invalid."}
+    elif file_path.lower().endswith(('.txt', '.text')):
         try:
             with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 text = f.read()
-        except Exception:
-            return {"error": "Could not parse file. Please upload a PDF or Text file."}
+        except Exception as e:
+            print(f"Error reading Text file: {e}")
+            return {"error": "Could not read Text file."}
+    else:
+        return {"error": "Unsupported file format. Please upload a PDF or Text file."}
 
     text_lower = text.lower()
     
@@ -343,7 +348,7 @@ def parse_resume(file_path):
     match_score = int((len(found_required) / len(required_profile_skills)) * 100)
     
     # Look for experience indicators (e.g. years of experience)
-    years_matches = re.findall(r'(\d+)\+?\s*years?\s+of\s+experience', text_lower)
+    years_matches = re.findall(r'(\d+)\+?\s*years?\'?\s+(?:of\s+)?experience\b', text_lower)
     exp = f"{years_matches[0]} Years" if years_matches else "Not explicitly specified (e.g. 'X years of experience')"
 
     return {
@@ -353,3 +358,14 @@ def parse_resume(file_path):
         "experience": exp,
         "total_skills_count": len(matched_skills)
     }
+
+
+def apply_dynamic_question_variation(question_text, category="General"):
+    """
+    Returns clean, natural, standard interview questions without artificial prefix labels.
+    """
+    if not question_text:
+        return ""
+    return question_text.strip()
+
+

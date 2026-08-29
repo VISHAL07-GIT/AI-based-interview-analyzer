@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  smart-interview-analyzer:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/smart_interview.db:/app/backend/smart_interview.db
+      - ./backend/uploads:/app/backend/uploads
+    restart: always

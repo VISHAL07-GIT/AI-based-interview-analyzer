@@ -1,4 +1,7 @@
-const API_BASE_URL = "http://localhost:5000/api";
+// Dynamically resolve API Base URL (uses current origin if hosted on 5000, fallback to 127.0.0.1:5000)
+const API_BASE_URL = (window.location.origin && window.location.origin.includes(':5000'))
+    ? `${window.location.origin}/api`
+    : "http://127.0.0.1:5000/api";
 
 // Fetch stored user data from local storage
 function getCurrentUser() {
@@ -47,7 +50,6 @@ function checkGuest() {
 
 // Toast notification helper
 function showToast(message, type = "info") {
-    // Create container if it doesn't exist
     let container = document.getElementById("toast-container");
     if (!container) {
         container = document.createElement("div");
@@ -56,7 +58,6 @@ function showToast(message, type = "info") {
         document.body.appendChild(container);
     }
     
-    // Create toast
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     
@@ -67,13 +68,47 @@ function showToast(message, type = "info") {
     toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
     
-    // Auto remove after 3.5 seconds
     setTimeout(() => {
         toast.style.animation = "toastIn 0.3s reverse forwards";
         setTimeout(() => {
             toast.remove();
         }, 300);
     }, 3500);
+}
+
+// Check real-time connection status to Flask backend
+async function checkBackendConnection() {
+    let badge = document.getElementById("backend-status-badge");
+    if (!badge) {
+        badge = document.createElement("div");
+        badge.id = "backend-status-badge";
+        badge.className = "backend-status-badge";
+        document.body.appendChild(badge);
+    }
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
+        const res = await fetch(`${API_BASE_URL}/health`, { 
+            method: 'GET', 
+            signal: controller.signal 
+        });
+        clearTimeout(timeoutId);
+        
+        if (res.ok) {
+            badge.className = "backend-status-badge connected";
+            badge.innerHTML = `<span class="dot green"></span> Connected`;
+            badge.title = `Flask Backend is live at ${API_BASE_URL}`;
+        } else {
+            badge.className = "backend-status-badge disconnected";
+            badge.innerHTML = `<span class="dot red"></span> Backend Error`;
+        }
+    } catch (e) {
+        badge.className = "backend-status-badge disconnected";
+        badge.innerHTML = `<span class="dot red"></span> Backend Offline`;
+        badge.title = "Could not reach Flask backend. Start server with: python backend/app.py";
+    }
 }
 
 // Dynamically update the header navigation based on login status
@@ -88,7 +123,6 @@ function updateNavigation() {
             <a href="profile.html" class="nav-link">Profile</a>
             <button onclick="logout()" class="btn-nav-outline">Log Out</button>
         `;
-        // Set active link
         const currentPath = window.location.pathname;
         const links = nav.querySelectorAll(".nav-link");
         links.forEach(link => {
@@ -105,9 +139,13 @@ function updateNavigation() {
     }
 }
 
-// Setup form handlers once DOM loads
+// Setup form handlers & health monitor once DOM loads
 document.addEventListener("DOMContentLoaded", () => {
     updateNavigation();
+    
+    // Check initial connection & schedule polling every 10 seconds
+    checkBackendConnection();
+    setInterval(checkBackendConnection, 10000);
     
     // Login form logic
     const loginForm = document.getElementById("login-form");

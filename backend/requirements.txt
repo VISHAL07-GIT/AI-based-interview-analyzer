@@ -5,3 +5,5 @@ textblob
 pypdf
 speechrecognition
 openai-whisper
+waitress
+gunicorn
