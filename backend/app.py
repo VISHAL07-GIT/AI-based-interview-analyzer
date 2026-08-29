@@ -27,15 +27,20 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
     return response
 
-# Database Configuration (SQLite by default)
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smart_interview.db")
+# Database Configuration (SQLite by default, use /tmp on Vercel for writable filesystem)
+if os.environ.get('VERCEL'):
+    db_path = "/tmp/smart_interview.db"
+    UPLOAD_FOLDER = "/tmp/uploads"
+else:
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smart_interview.db")
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
 # Create folders for uploads
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 AUDIO_FOLDER = os.path.join(UPLOAD_FOLDER, "audio")
 RESUME_FOLDER = os.path.join(UPLOAD_FOLDER, "resumes")
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
