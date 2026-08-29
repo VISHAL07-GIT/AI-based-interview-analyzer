@@ -1,7 +1,24 @@
-// Dynamically resolve API Base URL (uses current origin if hosted on 5000, fallback to 127.0.0.1:5000)
-const API_BASE_URL = (window.location.origin && window.location.origin.includes(':5000'))
-    ? `${window.location.origin}/api`
-    : "http://127.0.0.1:5000/api";
+// Dynamically resolve API Base URL across mobile, LAN, Cloud, and local environments
+function getApiBaseUrl() {
+    const origin = window.location.origin || "";
+    const hostname = window.location.hostname || "";
+    const protocol = window.location.protocol || "http:";
+
+    // If hosted on Cloud (Vercel, Render, Heroku) or running on Flask port 5000 directly
+    if (origin.includes('.vercel.app') || origin.includes('.onrender.com') || origin.includes(':5000')) {
+        return `${origin}/api`;
+    }
+
+    // If accessed over LAN/Wi-Fi from mobile or another device (e.g. http://10.94.195.67:8000 or http://192.168.x.x)
+    if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        return `${protocol}//${hostname}:5000/api`;
+    }
+
+    // Default local fallback
+    return "http://127.0.0.1:5000/api";
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Fetch stored user data from local storage
 function getCurrentUser() {

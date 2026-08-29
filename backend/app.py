@@ -18,7 +18,14 @@ app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 app.secret_key = "smart_interview_analyzer_secret_key"
 
 # Enable CORS for API routes across all origins
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Bypass-Tunnel-Reminder'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    return response
 
 # Database Configuration (SQLite by default)
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smart_interview.db")
